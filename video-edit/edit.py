@@ -12,6 +12,7 @@ Commands (run from anywhere; PROJECT is a project folder with raw/ and broll/):
   render PROJECT [--short] [--preview]
                              build out/final.mp4 (or out/short.mp4) from work/plan.json
   music [seed|fetch MOOD|scan|pick MOOD]   self-managing music library (see music.py)
+  upload login | upload PATH [--dry-run]   send finished videos to YouTube (see upload.py)
 
 All times in plan.json are MASTER times: seconds on the master angle's clock,
 the same clock as the transcript.
@@ -633,6 +634,8 @@ if __name__ == "__main__":
     c = a[0]
     if c == "new": cmd_new(a[1])
     elif c == "music": cmd_music(a[1:])
+    elif c == "upload":
+        sys.path.insert(0, str(HERE)); import upload; upload.main(a[1:])
     elif c == "probe": cmd_probe(a[1])
     elif c == "sync": cmd_sync(a[1])
     elif c == "transcribe": cmd_transcribe(a[1])

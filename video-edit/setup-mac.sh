@@ -39,7 +39,7 @@ brew list python@3.12 >/dev/null 2>&1 || brew install python@3.12
 if [ -d "$TOOLS/firstnaz-skills/.git" ]; then git -C "$TOOLS/firstnaz-skills" pull --ff-only
 else git clone https://github.com/benslater01/firstnaz-skills.git "$TOOLS/firstnaz-skills"; fi
 [ -d "$TOOLS/venv" ] || "$(brew --prefix python@3.12)/bin/python3.12" -m venv "$TOOLS/venv"
-"$TOOLS/venv/bin/pip" install -q --upgrade pip numpy mlx-whisper
+"$TOOLS/venv/bin/pip" install -q --upgrade pip numpy mlx-whisper google-api-python-client google-auth-oauthlib
 # warm the Whisper model once (about 1.5 GB download) so the first edit doesn't stall
 "$TOOLS/venv/bin/python" -c "from huggingface_hub import snapshot_download; snapshot_download('mlx-community/whisper-large-v3-turbo')"
 # the wrapper sits next to the projects and points the tool at its own folder
