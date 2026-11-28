@@ -48,6 +48,7 @@ Keep chat short. Ben reads previews, not essays.
 7. **Preview and approve.** `./edit render <project> --preview` (and `--short --preview`). Send Ben a short plan: length, what was cut, b-roll spots, music track, then the preview path(s). Wait for his go on the cut. Music is Claude's call, not a question.
 8. **Final.** `./edit render <project>` and `./edit render <project> --short`. Tell Ben the `out/` paths. If the track needs attribution, the render writes `out/music-credit.txt`: remind him to paste it in the YouTube description.
 9. Revisions: change `plan.json`, re-render. Don't redo sync/transcribe.
+10. **YouTube.** Once Ben approves the finals, write `work/youtube.json` for each project (below) and run `./edit upload <project or series folder> --dry-run`, then without `--dry-run`. Uploads go up private for Ben to review in YouTube Studio.
 
 ## Editing rules
 
@@ -152,6 +153,27 @@ All times are master-clock seconds, the same clock as the transcript.
 When a video is posted with a CC BY track, the credit line must go in the description. Remind Ben in the final message (paste it inline, it's short).
 
 Worship songs are not royalty free. CCLI streaming licenses cover live services, not edited videos with recorded tracks. Don't use them as beds.
+
+## YouTube upload
+
+`./edit upload PATH` uploads every `out/main.mp4` and `out/short.mp4` under PATH (one project, a series, or a whole family), in folder order. It adds each video to its playlist (and makes the playlist if it's missing) and writes the `video_id` back, so a rerun skips what's done. Music credit from `out/music-credit.txt` is appended to the description automatically.
+
+`work/youtube.json`, written by Claude:
+```json
+{"main":  {"title": "Know God | Next Steps at FirstNaz", "description": "One or two sentences on the video.\n\nWith Joe Proudfoot (Lead Pastor).",
+           "tags": ["FirstNaz"], "playlist": "E4", "privacy": "private", "video_id": null},
+ "short": {"title": "Hook line #Shorts", "description": "...", "playlist": null, "privacy": "private", "video_id": null}}
+```
+Titles are 100 characters at most, and titles and descriptions can't contain `<` or `>`. Default privacy is private.
+
+Limits: the API's free daily quota covers only a handful of uploads. When it runs out the command stops with a message: rerun the same command the next day. Until Google audits the Cloud project, YouTube locks API uploads to private, so Ben can't make them public. Apply for the audit (YouTube API Services audit form) before a launch date, or upload in YouTube Studio by hand.
+
+One-time Google setup (Ben does this, in his own Google account):
+1. console.cloud.google.com: create a project (e.g. "FirstNaz Uploads"). APIs & Services, Library: enable **YouTube Data API v3**.
+2. Google Auth Platform (OAuth consent screen): External, app name "FirstNaz Uploads", add his own Google account as a test user. Add the scope `.../auth/youtube`.
+3. Clients: Create client, type **Desktop app**. Download the JSON, save it as `~/.firstnaz-video/youtube/client_secret.json`.
+4. Run `./edit upload login` and sign in with the Google account that owns the church's YouTube channel (choose the channel if asked).
+Credentials stay in `~/.firstnaz-video/youtube/`, outside this public repo. Never commit them. While the consent screen is in Testing, the sign-in expires after 7 days: rerun `login` if uploads say the token is invalid.
 
 ## Setup (once, on the Mac)
 
